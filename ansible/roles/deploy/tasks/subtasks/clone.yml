@@ -19,8 +19,8 @@
   tags: always
 
 - name: Clone devops
- git:
+  git:
    repo: "{{ devops_repo }}"
    dest: "{{ project_root }}/DevOps"
    version: HEAD
- tags: always
+  tags: always

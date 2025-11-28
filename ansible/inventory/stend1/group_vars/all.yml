@@ -1,6 +1,6 @@
-frontend_repo: ""
-backend_repo: ""
-devops_repo: ""
+frontend_repo: "https://github.com/SupeRWiNdz/DevOps-Frontend"
+backend_repo: "https://github.com/SupeRWiNdz/DevOps-Backend"
+devops_repo: "https://github.com/SupeRWiNdz/DevOps"
 
-project_root: ""
-compose_file: ""
+project_root: "/home/danya/projects"
+compose_file: "/home/danya/projects/DevOps/docker-compose.yaml"
