@@ -1,0 +1,14 @@
+- name: Install Docker packages
+  apt:
+    name: "{{ docker_packages }}"
+    state: present
+    update_cache: yes
+  tags: always
+
+- name: Enable docker service
+  service:
+    name: docker
+    enabled: yes
+    state: started
+  tags: always
+  

@@ -1,0 +1,26 @@
+- name: Create project root
+  file:
+    path: "{{ project_root }}"
+    state: directory
+  tags: always
+
+- name: Clone frontend
+  git:
+    repo: "{{ frontend_repo }}"
+    dest: "{{ project_root }}/DevOps-Frontend"
+    version: HEAD
+  tags: always
+
+- name: Clone backend
+  git:
+    repo: "{{ backend_repo }}"
+    dest: "{{ project_root }}/DevOps-Backend"
+    version: HEAD
+  tags: always
+
+- name: Clone devops
+ git:
+   repo: "{{ devops_repo }}"
+   dest: "{{ project_root }}/DevOps"
+   version: HEAD
+ tags: always

@@ -1,0 +1,3 @@
+- name: Start docker-compose
+  shell: docker compose -f "{{ compose_file }}" up -d
+  tags: always
