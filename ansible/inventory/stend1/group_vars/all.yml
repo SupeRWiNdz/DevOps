@@ -3,4 +3,4 @@ backend_repo: "https://github.com/SupeRWiNdz/DevOps-Backend"
 devops_repo: "https://github.com/SupeRWiNdz/DevOps"
 
 project_root: "/home/danya/projects"
-compose_file: "/home/danya/projects/DevOps/docker-compose.yaml"
+compose_file: "/home/danya/projects/DevOps/docker-compose.yml"
