@@ -1,56 +1,21 @@
-- name: Check if Docker is installed
-  command: which docker
-  register: docker_installed
-  failed_when: false
-  changed_when: false
+- name: Check current directory structure
+  find:
+    paths: "{{ project_root }}"
+    patterns: "docker-compose.yml"
+    file_type: file
+  register: compose_files
 
-- name: Check if Docker Compose is available
-  command: docker compose version
-  register: compose_available
-  failed_when: false
-  changed_when: false
-
-- name: Debug Docker status
+- name: Debug found compose files
   debug:
-    msg: |
-      Docker installed: {{ docker_installed.rc == 0 }}
-      Docker Compose available: {{ compose_available.rc == 0 }}
+    var: compose_files.files
 
-- name: Check docker-compose file exists
-  stat:
-    path: "/home/danya/projects/DevOps/docker-compose.yml"
-  register: compose_file
+- name: Start containers with compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ project_root }}/DevOps"
+    state: present
+  when: compose_files.files | length > 0
 
-- name: Debug compose file
-  debug:
-    msg: "Compose file exists: {{ compose_file.stat.exists }}"
-
-- name: Fail if prerequisites not met
-  fail:
-    msg: |
-      Prerequisites not met:
-      - Docker installed: {{ docker_installed.rc == 0 }}
-      - Compose available: {{ compose_available.rc == 0 }}
-      - Compose file exists: {{ compose_file.stat.exists }}
-  when: >
-    docker_installed.rc != 0 or 
-    compose_available.rc != 0 or 
-    not compose_file.stat.exists
-
-- name: Start docker-compose
-  command: 
-    cmd: docker compose -f "docker-compose.yml" up -d
-    chdir: "/home/danya/projects/DevOps"
-  register: compose_result
-
-- name: Debug compose result
-  debug:
-    var: compose_result
-
-- name: Check running containers
-  command: docker ps
-  register: running_containers
-
-- name: Show running containers
-  debug:
-    msg: "Running containers: {{ running_containers.stdout_lines }}"
+- name: Alternative start method if compose not found
+  shell: |
+    cd {{ project_root }}/DevOps && docker-compose up -d
+  when: compose_files.files | length > 0
