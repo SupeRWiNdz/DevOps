@@ -1,3 +1,33 @@
+- name: Check if Docker is installed
+  command: which docker
+  register: docker_installed
+  failed_when: false
+  changed_when: false
+
+- name: Check if Docker Compose is available
+  command: docker compose version
+  register: compose_available
+  failed_when: false
+  changed_when: false
+
+- name: Fail if Docker not properly installed
+  fail:
+    msg: |
+      Docker Compose not available.
+      Docker installed: {{ docker_installed.rc == 0 }}
+      Compose available: {{ compose_available.rc == 0 }}
+      Please run with --tags install first.
+  when: docker_installed.rc != 0 or compose_available.rc != 0
+
+- name: Check docker-compose file exists
+  stat:
+    path: "/home/danya/projects/DevOps/docker-compose.yml"
+  register: compose_file
+
+- name: Fail if docker-compose file not found
+  fail:
+    msg: "docker-compose.yml not found at /home/danya/projects/DevOps/docker-compose.yml"
+  when: not compose_file.stat.exists
+
 - name: Start docker-compose
-  shell: docker compose -f "{{ compose_file }}" up -d
-  tags: always
+  command: docker compose -f "/home/danya/projects/DevOps/docker-compose.yml" up -d
