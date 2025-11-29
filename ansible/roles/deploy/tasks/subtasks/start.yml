@@ -10,24 +10,47 @@
   failed_when: false
   changed_when: false
 
-- name: Fail if Docker not properly installed
-  fail:
+- name: Debug Docker status
+  debug:
     msg: |
-      Docker Compose not available.
       Docker installed: {{ docker_installed.rc == 0 }}
-      Compose available: {{ compose_available.rc == 0 }}
-      Please run with --tags install first.
-  when: docker_installed.rc != 0 or compose_available.rc != 0
+      Docker Compose available: {{ compose_available.rc == 0 }}
 
 - name: Check docker-compose file exists
   stat:
     path: "/home/danya/projects/DevOps/docker-compose.yml"
   register: compose_file
 
-- name: Fail if docker-compose file not found
+- name: Debug compose file
+  debug:
+    msg: "Compose file exists: {{ compose_file.stat.exists }}"
+
+- name: Fail if prerequisites not met
   fail:
-    msg: "docker-compose.yml not found at /home/danya/projects/DevOps/docker-compose.yml"
-  when: not compose_file.stat.exists
+    msg: |
+      Prerequisites not met:
+      - Docker installed: {{ docker_installed.rc == 0 }}
+      - Compose available: {{ compose_available.rc == 0 }}
+      - Compose file exists: {{ compose_file.stat.exists }}
+  when: >
+    docker_installed.rc != 0 or 
+    compose_available.rc != 0 or 
+    not compose_file.stat.exists
 
 - name: Start docker-compose
-  command: docker compose -f "/home/danya/projects/DevOps/docker-compose.yml" up -d
+  command: 
+    cmd: docker compose -f "docker-compose.yml" up -d
+    chdir: "/home/danya/projects/DevOps"
+  register: compose_result
+
+- name: Debug compose result
+  debug:
+    var: compose_result
+
+- name: Check running containers
+  command: docker ps
+  register: running_containers
+
+- name: Show running containers
+  debug:
+    msg: "Running containers: {{ running_containers.stdout_lines }}"
