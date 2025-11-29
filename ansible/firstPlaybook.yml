@@ -1,10 +1,5 @@
-- hosts: host1
+- name: Deploy project
+  hosts: prod
   become: yes
   roles:
-    - role: deploy
-      tags: [deploy]
-  
-  tasks:
-    - name: Include Docker installation
-      include_tasks: roles/deploy/tasks/subtasks/install_docker.yml
-      tags: [install_docker]
+    - deploy
