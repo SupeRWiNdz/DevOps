@@ -1,6 +1,6 @@
 - name: Check current directory structure
   find:
-    paths: "{{ project_root }}"
+    paths: "{{ project_root }}/DevOps"
     patterns: "docker-compose.yml"
     file_type: file
   register: compose_files
@@ -13,7 +13,7 @@
   community.docker.docker_compose_v2:
     project_src: "{{ project_root }}/DevOps"
     state: present
-  when: compose_files.files | length > 0
+  tags: [start]
 
 - name: Alternative start method if compose not found
   shell: |
